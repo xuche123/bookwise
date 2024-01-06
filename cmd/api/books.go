@@ -8,7 +8,24 @@ import (
 )
 
 func (app *application) postBookHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "create a new movie")
+	var input struct {
+		Title         string    `json:"title"`
+		Author        string    `json:"author"`
+		PublishedDate time.Time `json:"published_date"`
+		ImageURL      string    `json:"image_url"`
+		Description   string    `json:"description"`
+	}
+
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	_, err = fmt.Fprintf(w, "%+v\n", input)
+	if err != nil {
+		return
+	}
 }
 
 func (app *application) getBookHandler(w http.ResponseWriter, r *http.Request) {
