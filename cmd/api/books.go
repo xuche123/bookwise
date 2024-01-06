@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/xuche123/bookwise/internal/data"
 	"net/http"
+	"time"
 )
 
 func (app *application) postBookHandler(w http.ResponseWriter, r *http.Request) {
@@ -16,5 +18,19 @@ func (app *application) getBookHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "show the details of book %d\n", id)
+	book := data.Book{
+		ID:            id,
+		Title:         "Test book",
+		Author:        "Test author",
+		PublishedDate: time.Time{},
+		ImageURL:      "-",
+		Description:   "Test description",
+		CreatedAt:     time.Now(),
+		Version:       1,
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"book": book}, nil)
+	if err != nil {
+		app.logger.Print(w, err)
+	}
 }
