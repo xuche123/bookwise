@@ -1,6 +1,7 @@
 package data
 
 import (
+	"database/sql"
 	"github.com/xuche123/bookwise/internal/validator"
 	"time"
 )
@@ -24,4 +25,31 @@ func ValidateBook(v *validator.Validator, book *Book) {
 	v.Check(len(book.ImageURL) <= 500, "image_url", "must not be more than 500 bytes long")
 	v.Check(book.Description != "", "description", "must be provided")
 	v.Check(len(book.Description) <= 50000, "description", "must not be more than 50000 bytes long")
+}
+
+type BookModel struct {
+	DB *sql.DB
+}
+
+func (m BookModel) Insert(book *Book) error {
+	query := `
+		INSERT INTO books (title, author, image_url, description) 
+		VALUES ($1, $2, $3, $4)
+		RETURNING id, created_at, version`
+
+	args := []any{book.Title, book.Author, book.ImageURL, book.Description}
+
+	return m.DB.QueryRow(query, args...).Scan(&book.ID, &book.CreatedAt, &book.Version)
+}
+
+func (m BookModel) Get(id int64) (*Book, error) {
+	return nil, nil
+}
+
+func (m BookModel) Update(book *Book) error {
+	return nil
+}
+
+func (m BookModel) Delete(id int64) error {
+	return nil
 }
