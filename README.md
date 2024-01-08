@@ -20,41 +20,40 @@ BookWise is a comprehensive Library Management System designed to streamline the
 
 ## API Endpoints
 
-- **GET /v1/healthcheck:** Show application health and version information.
+- **&#9745; GET /v1/healthcheck:** Show application health and version information.
+- **&#9744; GET /v1/books:** Retrieve details of all books.
 
-- **GET /v1/books:** Retrieve details of all books.
+- **&#9745; POST /v1/books:** Create a new book.
 
-- **POST /v1/books:** Create a new book.
+- **&#9745; GET /v1/books/:id:** Retrieve details of a specific book.
 
-- **GET /v1/books/:id:** Retrieve details of a specific book.
+- **&#9744; PATCH /v1/books/:id:** Update the details of a specific book.
 
-- **PATCH /v1/books/:id:** Update the details of a specific book.
+- **&#9744; DELETE /v1/books/:id:** Delete a specific book.
 
-- **DELETE /v1/books/:id:** Delete a specific book.
+- **&#9744; POST /v1/authors:** Register a new author.
 
-- **POST /v1/authors:** Register a new author.
+- **&#9744; PUT /v1/authors/:id:** Update the details of a specific author.
 
-- **PUT /v1/authors/:id:** Update the details of a specific author.
+- **&#9744; DELETE /v1/authors/:id:** Delete a specific author.
 
-- **DELETE /v1/authors/:id:** Delete a specific author.
+- **&#9744; POST /v1/genres:** Create a new genre.
 
-- **POST /v1/genres:** Create a new genre.
+- **&#9744; GET /v1/genres:** Retrieve details of all genres.
 
-- **GET /v1/genres:** Retrieve details of all genres.
+- **&#9744; GET /v1/genres/:id:** Retrieve details of a specific genre.
 
-- **GET /v1/genres/:id:** Retrieve details of a specific genre.
+- **&#9744; POST /v1/users/borrow:** Register a book borrowing transaction for a user.
 
-- **POST /v1/users/borrow:** Register a book borrowing transaction for a user.
+- **&#9744; PUT /v1/users/return/:transaction_id:** Mark a book as returned for a specific user transaction.
 
-- **PUT /v1/users/return/:transaction_id:** Mark a book as returned for a specific user transaction.
+- **&#9744; GET /v1/users/:id/transactions:** Show all book borrowing transactions for a specific user.
 
-- **GET /v1/users/:id/transactions:** Show all book borrowing transactions for a specific user.
+- **&#9744; POST /v1/tokens/authentication:** Generate a new authentication token.
 
-- **POST /v1/tokens/authentication:** Generate a new authentication token.
+- **&#9744; POST /v1/tokens/password-reset:** Generate a new password-reset token.
 
-- **POST /v1/tokens/password-reset:** Generate a new password-reset token.
-
-- **GET /debug/vars:** Display application metrics.
+- **&#9744; GET /debug/vars:** Display application metrics.
 
 ## Getting Started
 

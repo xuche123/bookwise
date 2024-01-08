@@ -2,6 +2,7 @@ package data
 
 import (
 	"database/sql"
+	"errors"
 	"github.com/xuche123/bookwise/internal/validator"
 	"time"
 )
@@ -43,7 +44,36 @@ func (m BookModel) Insert(book *Book) error {
 }
 
 func (m BookModel) Get(id int64) (*Book, error) {
-	return nil, nil
+	if id < 1 {
+		return nil, ErrRecordNotFound
+	}
+
+	query := `
+		SELECT id, title, author, image_url, description, created_at, version
+		FROM books
+		WHERE id = $1`
+
+	var book Book
+
+	err := m.DB.QueryRow(query, id).Scan(
+		&book.ID,
+		&book.Title,
+		&book.Author,
+		&book.ImageURL,
+		&book.Description,
+		&book.CreatedAt,
+		&book.Version,
+	)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrRecordNotFound
+		} else {
+			return nil, err
+		}
+	}
+
+	return &book, nil
 }
 
 func (m BookModel) Update(book *Book) error {
