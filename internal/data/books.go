@@ -77,9 +77,39 @@ func (m BookModel) Get(id int64) (*Book, error) {
 }
 
 func (m BookModel) Update(book *Book) error {
-	return nil
+	query := `
+		UPDATE books
+		SET title = $1, author = $2, image_url = $3, description = $4, version = version + 1
+		WHERE id = $5
+		RETURNING version`
+
+	args := []any{book.Title, book.Author, book.ImageURL, book.Description, book.ID}
+
+	return m.DB.QueryRow(query, args...).Scan(&book.Version)
 }
 
 func (m BookModel) Delete(id int64) error {
+	if id < 1 {
+		return ErrRecordNotFound
+	}
+
+	query := `
+		DELETE FROM books
+		WHERE id = $1`
+
+	result, err := m.DB.Exec(query, id)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return ErrRecordNotFound
+	}
+
 	return nil
 }
