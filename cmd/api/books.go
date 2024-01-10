@@ -6,6 +6,7 @@ import (
 	"github.com/xuche123/bookwise/internal/data"
 	"github.com/xuche123/bookwise/internal/validator"
 	"net/http"
+	"strconv"
 )
 
 func (app *application) postBookHandler(w http.ResponseWriter, r *http.Request) {
@@ -87,10 +88,19 @@ func (app *application) putBookHandler(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case errors.Is(err, data.ErrRecordNotFound):
 			app.notFoundResponse(w, r)
+		case errors.Is(err, data.ErrEditConflict):
+			app.editConflictResponse(w, r)
 		default:
 			app.serverErrorResponse(w, r, err)
 		}
 		return
+	}
+
+	if r.Header.Get("X-Expected-Version") != "" {
+		if strconv.FormatInt(int64(book.Version), 32) != r.Header.Get("X-Expected-Version") {
+			app.editConflictResponse(w, r)
+			return
+		}
 	}
 
 	var input struct {
