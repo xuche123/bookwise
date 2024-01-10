@@ -21,15 +21,15 @@ BookWise is a comprehensive Library Management System designed to streamline the
 ## API Endpoints
 
 - **&#9745; GET /v1/healthcheck:** Show application health and version information.
-- **&#9744; GET /v1/books:** Retrieve details of all books.
+- **&#9745; GET /v1/books:** Retrieve details of all books.
 
 - **&#9745; POST /v1/books:** Create a new book.
 
 - **&#9745; GET /v1/books/:id:** Retrieve details of a specific book.
 
-- **&#9744; PATCH /v1/books/:id:** Update the details of a specific book.
+- **&#9745; PATCH /v1/books/:id:** Update the details of a specific book.
 
-- **&#9744; DELETE /v1/books/:id:** Delete a specific book.
+- **&#9745; DELETE /v1/books/:id:** Delete a specific book.
 
 - **&#9744; POST /v1/authors:** Register a new author.
 

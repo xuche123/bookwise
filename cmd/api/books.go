@@ -159,3 +159,37 @@ func (app *application) deleteBookHandler(w http.ResponseWriter, r *http.Request
 		app.serverErrorResponse(w, r, err)
 	}
 }
+
+func (app *application) getAllBooksHandler(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Title  string
+		Author string
+		data.Filter
+	}
+
+	params := r.URL.Query()
+
+	v := validator.New()
+	input.Title = app.readString(params, "title", "")
+	input.Author = app.readString(params, "author", "")
+	input.Filter.Page = app.readInt(params, "page", 1, v)
+	input.Filter.PageSize = app.readInt(params, "page_size", 20, v)
+	input.Filter.Sort = app.readString(params, "sort", "id")
+	input.Filter.SortSafeList = []string{"id", "title", "author", "created_at", "-id", "-title", "-author", "-created_at"}
+
+	if data.ValidateFilters(v, input.Filter); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	books, err := app.models.Books.GetAll(input.Title, input.Author, input.Filter)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"books": books}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}

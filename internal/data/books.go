@@ -3,6 +3,7 @@ package data
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"github.com/xuche123/bookwise/internal/validator"
 	"time"
 )
@@ -122,4 +123,54 @@ func (m BookModel) Delete(id int64) error {
 	}
 
 	return nil
+}
+
+func (m BookModel) GetAll(title string, author string, filter Filter) ([]*Book, error) {
+	query := fmt.Sprintf(`
+		SELECT id, title, author, image_url, description, created_at, version
+		FROM books
+		WHERE (to_tsvector('simple', title) @@ plainto_tsquery('simple', $1) OR $1 = '')
+		AND (to_tsvector('simple', author) @@ plainto_tsquery('simple', $2) OR $2 = '')
+		ORDER BY %s %s, id ASC
+		LIMIT $3 OFFSET $4`, filter.sortColumn(), filter.sortDirection())
+
+	rows, err := m.DB.Query(query, title, author, filter.limit(), filter.offset())
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			return
+		}
+	}(rows)
+
+	books := []*Book{}
+
+	for rows.Next() {
+		var book Book
+
+		err := rows.Scan(
+			&book.ID,
+			&book.Title,
+			&book.Author,
+			&book.ImageURL,
+			&book.Description,
+			&book.CreatedAt,
+			&book.Version,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+		books = append(books, &book)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return books, nil
 }
